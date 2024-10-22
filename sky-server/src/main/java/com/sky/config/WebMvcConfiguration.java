@@ -18,6 +18,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 /**
  * 配置类，注册web层相关组件
  */
+//自动调用: 当 Spring 容器启动时，它会查找所有标注了 @Configuration 的类并执行其中的方法，注册相关的 bean 和配置。
 @Configuration
 @Slf4j
 public class WebMvcConfiguration extends WebMvcConfigurationSupport {
@@ -43,26 +44,30 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      */
     @Bean
     public Docket docket() {
+        log.info("准备生成接口文档");
         ApiInfo apiInfo = new ApiInfoBuilder()
                 .title("苍穹外卖项目接口文档")
                 .version("2.0")
                 .description("苍穹外卖项目接口文档")
-                .build();
+                .build();//构建生成的文档信息
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.sky.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.sky.controller"))//指定生成接口需要扫面的包
                 .paths(PathSelectors.any())
                 .build();
         return docket;
     }
+
 
     /**
      * 设置静态资源映射
      * @param registry
      */
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        log.info("开启静态资源映射");
         registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
+    //这段代码的作用是配置 Spring MVC，使其能够处理静态资源请求，分别为 /doc.html 和 /webjars/** 的请求指向特定的类路径下的目录，从而使得前端可以访问这些资源。
 }
